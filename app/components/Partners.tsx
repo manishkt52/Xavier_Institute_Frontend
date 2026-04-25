@@ -10,7 +10,7 @@ export default function Partners() {
 
   return (
     <section className="bg-gray-100 p-10 text-center">
-      <h2 className="text-2xl font-bold mb-6">Our Partners</h2>
+      <h2 className="text-2xl font-bold mb-6 text-black">Our Partners</h2>
 
       <div className="flex justify-center gap-8 flex-wrap items-center">
         {partners.map((src, i) => (
