@@ -2,44 +2,36 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { GoogleLogin } from "@react-oauth/google";
 import {
-  GraduationCap,
+  Briefcase,
   Lock,
   User,
   Loader2,
 } from "lucide-react";
 
-export default function StudentLogin() {
+export default function EmployeeLogin() {
   const router = useRouter();
 
-  const [studentId, setStudentId] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [employeeId, setEmployeeId] =
+    useState("");
+
+  const [password, setPassword] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
 
   // ✅ Session Check
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const res = await fetch(
-          "http://localhost:8000/protected",
-          {
-            credentials: "include",
-          }
-        );
+    const role =
+      localStorage.getItem("role");
 
-        if (res.ok) {
-          router.replace("/dashboard");
-        }
-      } catch (error) {
-        console.log("Not logged in");
-      }
-    };
-
-    checkSession();
+    if (role === "employee") {
+      router.push("/employee-dashboard");
+    }
   }, [router]);
 
-  // ✅ Normal Login
+  // ✅ Login Handler
   const handleLogin = async (e: any) => {
     e.preventDefault();
 
@@ -47,71 +39,42 @@ export default function StudentLogin() {
 
     try {
       const res = await fetch(
-        "http://localhost:8000/student-login-id",
+        "http://127.0.0.1:8000/employee-login",
         {
           method: "POST",
 
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
 
-          credentials: "include",
-
           body: JSON.stringify({
-            user_id: studentId,
-            password: password,
+            id: employeeId,
+            password,
           }),
         }
       );
 
       const data = await res.json();
-      if (res.ok) {
-        router.replace("/dashboard");
-      } else {
-        alert(data.detail || "Login Failed ❌");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Server error ❌");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ✅ Google Login
-  const handleGoogleLogin = async (
-    token: string
-  ) => {
-    setLoading(true);
-
-    try {
-      const res = await fetch(
-        "http://localhost:8000/auth/google",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          credentials: "include",
-
-          body: JSON.stringify({ token }),
-        }
-      );
-
-      const data = await res.json();
 
       if (res.ok) {
-        router.replace("/dashboard");
+        localStorage.setItem(
+          "role",
+          "employee"
+        );
+
+        router.push(
+          "/employee-dashboard"
+        );
       } else {
         alert(
           data.detail ||
-            "Google Login Failed ❌"
+            "Login Failed ❌"
         );
       }
     } catch (error) {
       console.error(error);
+
       alert("Server error ❌");
     } finally {
       setLoading(false);
@@ -127,8 +90,10 @@ export default function StudentLogin() {
       "
       style={{
         backgroundImage:
-          "url('/Images/student_login.avif')",
+          "url('/Images/employee_login.jpg')",
+
         backgroundSize: "cover",
+
         backgroundPosition: "center",
       }}
     >
@@ -184,18 +149,18 @@ export default function StudentLogin() {
               bg-blue-600 shadow-lg
             "
           >
-            <GraduationCap
+            <Briefcase
               size={30}
               className="text-white"
             />
           </div>
 
           <h1 className="text-2xl font-bold text-white">
-            Student Login
+            Employee Login
           </h1>
 
           <p className="mt-2 text-sm text-gray-200">
-            Access your dashboard
+            Secure employee portal access
           </p>
         </div>
 
@@ -205,7 +170,7 @@ export default function StudentLogin() {
           className="space-y-4"
         >
 
-          {/* Student ID */}
+          {/* Employee ID */}
           <div className="relative">
 
             <User
@@ -218,10 +183,12 @@ export default function StudentLogin() {
 
             <input
               type="text"
-              placeholder="Student ID"
-              value={studentId}
+              placeholder="Employee ID"
+              value={employeeId}
               onChange={(e) =>
-                setStudentId(e.target.value)
+                setEmployeeId(
+                  e.target.value
+                )
               }
               className="
                 w-full rounded-2xl
@@ -253,7 +220,9 @@ export default function StudentLogin() {
               placeholder="Password"
               value={password}
               onChange={(e) =>
-                setPassword(e.target.value)
+                setPassword(
+                  e.target.value
+                )
               }
               className="
                 w-full rounded-2xl
@@ -291,6 +260,7 @@ export default function StudentLogin() {
                   size={18}
                   className="animate-spin"
                 />
+
                 Loading...
               </>
             ) : (
@@ -299,54 +269,17 @@ export default function StudentLogin() {
           </button>
         </form>
 
-        {/* Divider */}
-        <div className="my-5 flex items-center gap-4">
-
-          <div className="h-px flex-1 bg-white/20"></div>
-
-          <span className="text-sm text-gray-300">
-            OR
-          </span>
-
-          <div className="h-px flex-1 bg-white/20"></div>
-        </div>
-
-        {/* Google Login */}
-        <div className="flex justify-center">
-
-          <div
-            className={
-              loading
-                ? "pointer-events-none opacity-50"
-                : ""
-            }
-          >
-            <GoogleLogin
-              onSuccess={(
-                credentialResponse
-              ) => {
-                if (
-                  credentialResponse.credential
-                ) {
-                  handleGoogleLogin(
-                    credentialResponse.credential
-                  );
-                }
-              }}
-
-              onError={() => {
-                alert(
-                  "Google Login Failed ❌"
-                );
-              }}
-            />
-          </div>
-        </div>
-
         {/* Footer */}
-        <p className="mt-5 text-center text-sm text-gray-300">
-          Forgot password?
-        </p>
+        <div className="mt-5">
+
+          <p className="text-center text-sm text-gray-300">
+            Employee Access Only
+          </p>
+
+          <p className="mt-2 text-center text-xs text-gray-400">
+            Authorized personnel only
+          </p>
+        </div>
       </div>
     </div>
   );
