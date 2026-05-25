@@ -22,7 +22,7 @@ export default function StudentLogin() {
     const checkSession = async () => {
       try {
         const res = await fetch(
-          "http://localhost:8000/protected",
+          `${process.env.NEXT_PUBLIC_API_URL}/protected`,
           {
             credentials: "include",
           }
@@ -47,7 +47,7 @@ export default function StudentLogin() {
 
     try {
       const res = await fetch(
-        "http://localhost:8000/student-login-id",
+        `${process.env.NEXT_PUBLIC_API_URL}/student-login-id`,
         {
           method: "POST",
 
@@ -86,7 +86,7 @@ export default function StudentLogin() {
 
     try {
       const res = await fetch(
-        "http://localhost:8000/auth/google",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/google`,
         {
           method: "POST",
 

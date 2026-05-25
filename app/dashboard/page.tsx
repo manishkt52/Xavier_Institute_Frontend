@@ -37,7 +37,7 @@ export default function Dashboard() {
         try {
           const res =
             await fetch(
-              "http://localhost:8000/protected",
+              `${process.env.NEXT_PUBLIC_API_URL}/protected`,
               {
                 credentials:
                   "include",
@@ -97,7 +97,7 @@ export default function Dashboard() {
       try {
         const res =
           await fetch(
-            "http://localhost:8000/create-order",
+            `${process.env.NEXT_PUBLIC_API_URL}/create-order`,
             {
               method: "POST",
               credentials:
@@ -188,7 +188,7 @@ export default function Dashboard() {
       try {
         const res =
           await fetch(
-            "http://localhost:8000/logout",
+            `${process.env.NEXT_PUBLIC_API_URL}/logout`,
             {
               method:
                 "POST",
